@@ -9,6 +9,7 @@ func main(){
 
     r:= mux.NewRouter()
     r.HandleFunc("/file", FileUploadHandler).Methods("POST")
+    r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
     
 
     http.ListenAndServe(":3000", r)
