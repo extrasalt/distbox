@@ -17,5 +17,12 @@ func main(){
 
 
 func FileUploadHandler(w http.ResponseWriter, r *http.Request){
-    w.Write([]byte("File upload handler"))
+
+    r.ParseForm()
+
+    data := r.Form["data"][0]
+
+    w.Write([]byte(data))
+
+
 }

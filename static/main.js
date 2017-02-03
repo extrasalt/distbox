@@ -1,5 +1,3 @@
-console.log("Hello world")
-
 $(function() {
   
   $('#dropzone').on('dragover', function() {
@@ -14,29 +12,29 @@ $(function() {
     var file = this.files[0];
 
     $('#dropzone').removeClass('hover');
-    
-    if (this.accept && $.inArray(file.type, this.accept.split(/, ?/)) == -1) {
-      return alert('File type not allowed.');
-    }
+
     
     $('#dropzone').addClass('dropped');
     $('#dropzone img').remove();
     
-    if ((/^image\/(gif|png|jpeg)$/i).test(file.type)) {
       var reader = new FileReader(file);
 
       reader.readAsDataURL(file);
+
+      console.log(file);
       
       reader.onload = function(e) {
-        var data = e.target.result,
-            $img = $('<img />').attr('src', data).fadeIn();
+        var data = e.target.result;
+
+        console.log(data);
         
-        $('#dropzone div').html($img);
+        $.post("/file", {data: data}, function(data){
+          document.write(data)
+        })
       };
-    } else {
+
       var ext = file.name.split('.').pop();
       
       $('#dropzone div').html(ext);
-    }
   });
 });
