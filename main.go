@@ -4,7 +4,7 @@ import (
     "net/http"
     "github.com/gorilla/mux"
     "crypto/sha256"
-    "encoding/base64"
+    "encoding/hex"
 )
 
 func main(){
@@ -27,8 +27,8 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request){
 
     data := r.Form["data"][0]
 
-    hashOfFile := sha.Sum([]byte(data))
-    hashString := base64.URLEncoding.EncodeToString(hashOfFile)
+    sha.Write([]byte(data))
+    hashString := hex.EncodeToString(sha.Sum(nil))
 
     //w.Write([]byte(data))
     w.Write([]byte(hashString))
