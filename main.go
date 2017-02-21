@@ -4,7 +4,12 @@ import (
     "net/http"
     "github.com/gorilla/mux"
     "crypto/sha256"
-    "encoding/hex"
+    //"encoding/hex"
+    "crypto/aes"
+    "crypto/rand"
+    "crypto/cipher"
+    "io"
+    "fmt"
 )
 
 func main(){
@@ -28,10 +33,32 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request){
     data := r.Form["data"][0]
 
     sha.Write([]byte(data))
-    hashString := hex.EncodeToString(sha.Sum(nil))
+    key:=sha.Sum(nil)
+    plaintext := []byte(data)
 
-    //w.Write([]byte(data))
-    w.Write([]byte(hashString))
+    fmt.Printf("%x\n", encrypt(key, plaintext))
 
-
+    
 }
+
+func encrypt(key []byte, plaintext []byte) (ciphertext []byte){
+    block, err := aes.NewCipher(key)
+    if err != nil {
+        panic(err.Error())
+    }
+
+    nonce := make([]byte, 12)
+    if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
+        panic(err.Error())
+    }
+
+    aesgcm, err := cipher.NewGCM(block)
+    if err != nil {
+        panic(err.Error())
+    }
+
+    ciphertext = aesgcm.Seal(nil, nonce, plaintext, nil)
+
+    return ciphertext
+    
+} 
