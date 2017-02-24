@@ -19,7 +19,7 @@ $(function() {
     
       var reader = new FileReader(file);
 
-      reader.readAsDataURL(file);
+      reader.readAsBinaryString(file);
 
       console.log(file);
       

@@ -16,7 +16,10 @@ func main(){
 
     r:= mux.NewRouter()
     r.HandleFunc("/file", FileUploadHandler).Methods("POST")
+    r.HandleFunc("/try", TrialHandler)
     r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
+
+
     
 
     http.ListenAndServe(":3000", r)
@@ -37,8 +40,15 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request){
     plaintext := []byte(data)
 
     intermediate := encrypt(key, plaintext)
+    detext := decrypt(key, intermediate)
 
-    decrypt(key, intermediate)
+    w.Header().Set("Content-Disposition", "attachment; filename=Hello")
+    //w.Header().Set("Content-Type", "application/octet-stream")
+    w.Header().Set("Content-Length", fmt.Sprintf("%d",len(detext)))
+    w.Header().Set("Content-Type", "application/force-download");
+    w.Header().Set("Content-Transfer-Encoding", "binary");
+
+    w.Write([]byte(detext))
 
     
 }
@@ -88,5 +98,18 @@ func decrypt(key []byte, ciphertext []byte) (plaintext []byte){
     fmt.Printf("%s\n", plaintext)
 
     return plaintext
+
+}
+
+func TrialHandler(w http.ResponseWriter, r *http.Request){
+
+    detext := "omogggggjisadjal"
+    w.Header().Set("Content-Disposition", "attachment; filename=Hello")
+    //w.Header().Set("Content-Type", "application/octet-stream")
+    w.Header().Set("Content-Length", fmt.Sprintf("%d",len(detext)))
+    w.Header().Set("Content-Type", "application/force-download");
+    w.Header().Set("Content-Transfer-Encoding", "binary");
+
+    w.Write([]byte(detext))
 
 }
