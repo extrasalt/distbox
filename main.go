@@ -4,11 +4,11 @@ import (
     "net/http"
     "github.com/gorilla/mux"
     "crypto/sha256"
-    //"encoding/hex"
+    "encoding/hex"
     "crypto/aes"
-    "crypto/rand"
+    //"crypto/rand"
     "crypto/cipher"
-    "io"
+    //"io"
     "fmt"
 )
 
@@ -36,7 +36,9 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request){
     key:=sha.Sum(nil)
     plaintext := []byte(data)
 
-    fmt.Printf("%x\n", encrypt(key, plaintext))
+    intermediate := encrypt(key, plaintext)
+
+    decrypt(key, intermediate)
 
     
 }
@@ -47,10 +49,12 @@ func encrypt(key []byte, plaintext []byte) (ciphertext []byte){
         panic(err.Error())
     }
 
-    nonce := make([]byte, 12)
-    if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
-        panic(err.Error())
-    }
+    // nonce := make([]byte, 12)
+    // if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
+    //     panic(err.Error())
+    // }
+
+    nonce, _ := hex.DecodeString("37b8e8a308c354048d245f6d")
 
     aesgcm, err := cipher.NewGCM(block)
     if err != nil {
@@ -62,3 +66,27 @@ func encrypt(key []byte, plaintext []byte) (ciphertext []byte){
     return ciphertext
     
 } 
+
+func decrypt(key []byte, ciphertext []byte) (plaintext []byte){
+    nonce, _ := hex.DecodeString("37b8e8a308c354048d245f6d")
+
+    block, err := aes.NewCipher(key)
+    if err != nil {
+        panic(err.Error())
+    }
+
+    aesgcm, err := cipher.NewGCM(block)
+    if err != nil {
+        panic(err.Error())
+    }
+
+    plaintext, err = aesgcm.Open(nil, nonce, ciphertext, nil)
+    if err != nil {
+        panic(err.Error())
+    }
+
+    fmt.Printf("%s\n", plaintext)
+
+    return plaintext
+
+}
