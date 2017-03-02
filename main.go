@@ -5,18 +5,36 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/sha256"
+	"database/sql"
 	"encoding/hex"
-	//"fmt"
+	"fmt"
 	"github.com/gorilla/mux"
 	ipfs "github.com/ipfs/go-ipfs-api"
+	_ "github.com/lib/pq"
+	"golang.org/x/crypto/bcrypt"
 	"io"
 	"net/http"
 )
 
+var DB *sql.DB
+
 func main() {
+	var err error
+
+	DB, err = sql.Open("postgres", "password=password  user=user dbname=my_db sslmode=disable")
+	if err != nil {
+		panic(err)
+	}
+
+	_, err = DB.Exec("CREATE TABLE IF NOT EXISTS login(name varchar, password varchar)")
+
+	if err != nil {
+		panic(err)
+	}
 
 	r := mux.NewRouter()
 	r.HandleFunc("/login", LoginHandler)
+	r.HandleFunc("/signup", SignUpHandler).Methods("POST")
 	r.HandleFunc("/file/{id}", authenticate(GetFileHandler)).Methods("GET")
 	r.HandleFunc("/file", authenticate(FileUploadHandler)).Methods("POST")
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
@@ -118,11 +136,68 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	username := r.Form["name"][0]
 	password := r.Form["password"][0]
 
-	if username == "mohan" && password == "momo" {
+	err = authorize(username, password)
+
+	if err == nil {
 		cookie := &http.Cookie{Name: "rcs", Value: username, MaxAge: 3600, Secure: false, HttpOnly: true, Raw: username}
 		http.SetCookie(w, cookie)
 		w.Write([]byte("authenticated"))
 	} else {
 		w.Write([]byte("Wrong password"))
 	}
+}
+
+func SignUpHandler(w http.ResponseWriter, r *http.Request) {
+
+	err := r.ParseForm()
+
+	if err != nil {
+		panic(err)
+	}
+
+	username := r.Form["name"][0]
+	password := r.Form["password"][0]
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+	_, err = DB.Exec("insert into login values($1, $2)", username, hashedPassword)
+	http.Redirect(w, r, "/", 302)
+}
+
+func authorize(username string, password string) (autherr error) {
+
+	var dbpassword string
+
+	rows, err := DB.Query("Select password from login where name=$1", username)
+
+	if err != nil {
+		panic(err)
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&dbpassword)
+
+		if err != nil {
+			panic(err)
+		}
+
+		break
+
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(dbpassword), []byte(password))
+
+	if err == nil {
+
+		return nil
+
+	} else {
+		autherr = fmt.Errorf("Cannot authorize %q", username)
+
+		return autherr
+	}
+
 }
