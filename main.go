@@ -16,6 +16,7 @@ import (
 func main() {
 
 	r := mux.NewRouter()
+	r.HandleFunc("/login", LoginHandler)
 	r.HandleFunc("/file/{id}", GetFileHandler).Methods("GET")
 	r.HandleFunc("/file", FileUploadHandler).Methods("POST")
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
@@ -92,4 +93,35 @@ func decrypt(keyString string, ciphertext io.Reader) (plainReader io.Reader) {
 	plainReader = &cipher.StreamReader{S: stream, R: ciphertext}
 
 	return plainReader
+}
+
+// func authenticate(next http.Handler) http.Handler {
+
+// 	return func(w http.ResponseWriter, r *http.Request){
+// 		if cookies == authenticated {
+// 			next(w, r)
+// 		} else {
+// 			http.Redirect(w)
+// 		}
+
+// 	}
+
+// }
+
+func LoginHandler(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		panic(err)
+	}
+
+	username := r.Form["name"][0]
+	password := r.Form["password"][0]
+
+	if username == "mohan" && password == "momo" {
+		cookie := &http.Cookie{Name: "rcs", Value: username, MaxAge: 3600, Secure: false, HttpOnly: true, Raw: username}
+		http.SetCookie(w, cookie)
+		w.Write([]byte("authenticated"))
+	} else {
+		w.Write([]byte("Wrong password"))
+	}
 }
