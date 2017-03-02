@@ -98,7 +98,12 @@ func decrypt(keyString string, ciphertext io.Reader) (plainReader io.Reader) {
 func authenticate(next http.HandlerFunc) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		next(w, r)
+		_, err := r.Cookie("rcs")
+		if err != nil {
+			http.Redirect(w, r, "/login", 302)
+		} else {
+			next(w, r)
+		}
 
 	}
 
