@@ -2,20 +2,6 @@ body {
   background: #ee4c58;
 }
 
-#nav{
-  float:right;
-  height: 30px;
-  width: 100%;
-  background: #ee4c58;
-  text-align: right;
-  position: absolute;
-  top:0;
-  right:0;
-  padding: 30px;
-  font: bold 16px arial;
-  color: #fff;
-}
-
 #dropzone {
   position: absolute;
   top: 50%;
