@@ -9,9 +9,9 @@ import (
 	//"crypto/rand"
 	"crypto/cipher"
 	//"io"
+	"bytes"
 	"fmt"
 	ipfs "github.com/ipfs/go-ipfs-api"
-	"bytes"
 	"io"
 )
 
@@ -25,10 +25,10 @@ func main() {
 	http.ListenAndServe(":3000", r)
 }
 
-func GetFileHandler(w http.ResponseWriter, r *http.Request){
+func GetFileHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
-	resp, err := http.Get("http://127.0.0.1:8080/ipfs/"+id)
+	resp, err := http.Get("http://127.0.0.1:8080/ipfs/" + id)
 
 	if err != nil {
 		panic(err)
@@ -56,7 +56,7 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 	shell := ipfs.NewShell("localhost:5001")
 	hash, err := shell.Add(rd)
 
-	if err !=nil {
+	if err != nil {
 		panic(err)
 	}
 
