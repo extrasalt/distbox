@@ -1,18 +1,16 @@
 package main
 
 import (
+	"bytes"
 	"crypto/aes"
+	"crypto/cipher"
 	"crypto/sha256"
 	"encoding/hex"
+	//"fmt"
 	"github.com/gorilla/mux"
-	"net/http"
-	//"crypto/rand"
-	"crypto/cipher"
-	//"io"
-	"bytes"
-	"fmt"
 	ipfs "github.com/ipfs/go-ipfs-api"
 	"io"
+	"net/http"
 )
 
 func main() {
@@ -39,22 +37,20 @@ func GetFileHandler(w http.ResponseWriter, r *http.Request) {
 
 func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 
-	sha := sha256.New()
-
 	r.ParseForm()
-
 	data := r.Form["data"][0]
 
+	//Find Key
+	sha := sha256.New()
 	sha.Write([]byte(data))
-	key := sha.Sum(nil)
-	plaintext := []byte(data)
+	key := hex.EncodeToString(sha.Sum(nil))
+
+	plaintext := bytes.NewReader([]byte(data))
 
 	ciphertext := encrypt(key, plaintext)
 
-	rd := bytes.NewReader(ciphertext)
-
 	shell := ipfs.NewShell("localhost:5001")
-	hash, err := shell.Add(rd)
+	hash, err := shell.Add(ciphertext)
 
 	if err != nil {
 		panic(err)
@@ -63,49 +59,37 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(hash))
 	w.Write([]byte("\n\n"))
 
-	w.Write([]byte(hex.EncodeToString(key)))
+	w.Write([]byte((key)))
 
 }
 
-func encrypt(key []byte, plaintext []byte) (ciphertext []byte) {
+func encrypt(keyString string, plaintext io.Reader) (cipherReader io.Reader) {
+	key, _ := hex.DecodeString(keyString)
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		panic(err.Error())
 	}
 
-	nonce, _ := hex.DecodeString("37b8e8a308c354048d245f6d")
+	nonce, _ := hex.DecodeString("37b8e8a308c354048d245f6d00000000")
 
-	aesgcm, err := cipher.NewGCM(block)
-	if err != nil {
-		panic(err.Error())
-	}
+	stream := cipher.NewCFBEncrypter(block, nonce)
+	cipherReader = &cipher.StreamReader{S: stream, R: plaintext}
 
-	ciphertext = aesgcm.Seal(nil, nonce, plaintext, nil)
-
-	return ciphertext
+	return cipherReader
 
 }
 
-func decrypt(key []byte, ciphertext []byte) (plaintext []byte) {
-	nonce, _ := hex.DecodeString("37b8e8a308c354048d245f6d")
+func decrypt(keyString string, ciphertext io.Reader) (plainReader io.Reader) {
+	key, _ := hex.DecodeString(keyString)
+
+	nonce, _ := hex.DecodeString("37b8e8a308c354048d245f6d00000000")
 
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		panic(err.Error())
 	}
+	stream := cipher.NewCFBDecrypter(block, nonce)
+	plainReader = &cipher.StreamReader{S: stream, R: ciphertext}
 
-	aesgcm, err := cipher.NewGCM(block)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	plaintext, err = aesgcm.Open(nil, nonce, ciphertext, nil)
-	if err != nil {
-		panic(err.Error())
-	}
-
-	fmt.Printf("%s\n", plaintext)
-
-	return plaintext
-
+	return plainReader
 }
