@@ -17,8 +17,8 @@ func main() {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/login", LoginHandler)
-	r.HandleFunc("/file/{id}", GetFileHandler).Methods("GET")
-	r.HandleFunc("/file", FileUploadHandler).Methods("POST")
+	r.HandleFunc("/file/{id}", authenticate(GetFileHandler)).Methods("GET")
+	r.HandleFunc("/file", authenticate(FileUploadHandler)).Methods("POST")
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 
 	http.ListenAndServe(":3000", r)
@@ -95,18 +95,14 @@ func decrypt(keyString string, ciphertext io.Reader) (plainReader io.Reader) {
 	return plainReader
 }
 
-// func authenticate(next http.Handler) http.Handler {
+func authenticate(next http.HandlerFunc) http.HandlerFunc {
 
-// 	return func(w http.ResponseWriter, r *http.Request){
-// 		if cookies == authenticated {
-// 			next(w, r)
-// 		} else {
-// 			http.Redirect(w)
-// 		}
+	return func(w http.ResponseWriter, r *http.Request) {
+		next(w, r)
 
-// 	}
+	}
 
-// }
+}
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
