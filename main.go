@@ -51,14 +51,38 @@ func main() {
 
 func GetFileHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	id := vars["id"]
-	resp, err := http.Get("http://127.0.0.1:8080/ipfs/" + id)
+	key := vars["id"]
+
+	var qhash string
+
+	rows, err := DB.Query("Select qhash from files where keyhash=$1", key)
+
+	if err != nil {
+		panic(err)
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&qhash)
+
+		if err != nil {
+			panic(err)
+		}
+
+		break
+
+	}
+
+	//sends a GET to Ipfs daemon
+	//with hash corresponding to the key in url
+	resp, err := http.Get("http://127.0.0.1:8080/ipfs/" + qhash)
 
 	if err != nil {
 		panic(err)
 	}
 	defer resp.Body.Close()
-	_, err = io.Copy(w, resp.Body)
+
+	decryptedReader := decrypt(key, resp.Body)
+	_, err = io.Copy(w, decryptedReader)
 }
 
 func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
