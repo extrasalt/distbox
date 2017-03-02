@@ -32,6 +32,13 @@ func main() {
 		panic(err)
 	}
 
+	//Replace with proper relational tables.
+	_, err = DB.Exec("CREATE TABLE IF NOT EXISTS files(qhash varchar, keyhash varchar)")
+
+	if err != nil {
+		panic(err)
+	}
+
 	r := mux.NewRouter()
 	r.HandleFunc("/login", LoginHandler)
 	r.HandleFunc("/signup", SignUpHandler).Methods("POST")
@@ -74,6 +81,9 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
+
+	//Add the hash received from ipfs and the key to the database
+	_, err = DB.Exec("insert into files values($1, $2)", hash, key)
 
 	w.Write([]byte(hash))
 	w.Write([]byte("\n\n"))
