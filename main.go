@@ -12,15 +12,29 @@ import (
 	"fmt"
 	ipfs "github.com/ipfs/go-ipfs-api"
 	"bytes"
+	"io"
 )
 
 func main() {
 
 	r := mux.NewRouter()
+	r.HandleFunc("/file/{id}", GetFileHandler).Methods("GET")
 	r.HandleFunc("/file", FileUploadHandler).Methods("POST")
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 
 	http.ListenAndServe(":3000", r)
+}
+
+func GetFileHandler(w http.ResponseWriter, r *http.Request){
+	vars := mux.Vars(r)
+	id := vars["id"]
+	resp, err := http.Get("http://127.0.0.1:8080/ipfs/"+id)
+
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+	_, err = io.Copy(w, resp.Body)
 }
 
 func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
