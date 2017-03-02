@@ -10,6 +10,8 @@ import (
 	"crypto/cipher"
 	//"io"
 	"fmt"
+	ipfs "github.com/ipfs/go-ipfs-api"
+	"bytes"
 )
 
 func main() {
@@ -33,7 +35,19 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 	key := sha.Sum(nil)
 	plaintext := []byte(data)
 
-	encrypt(key, plaintext)
+	ciphertext := encrypt(key, plaintext)
+
+	rd := bytes.NewReader(ciphertext)
+
+	shell := ipfs.NewShell("localhost:5001")
+	hash, err := shell.Add(rd)
+
+	if err !=nil {
+		panic(err)
+	}
+
+	w.Write([]byte(hash))
+	w.Write([]byte("\n\n"))
 
 	w.Write([]byte(hex.EncodeToString(key)))
 
