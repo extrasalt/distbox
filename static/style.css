@@ -10,7 +10,8 @@ body {
 
   height: 200px;
   text-align: center;
-  width: 300px;
+  width: 100%;
+  max-width: 600px;
   text-overflow: clip;
   position: relative;
 }
@@ -26,6 +27,7 @@ body {
   cursor: pointer;
   opacity: 0;
   height: 100%;
+  width: 100%;
 
 }
 
