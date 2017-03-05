@@ -1,14 +1,14 @@
 body {
-  background: #ee4c58;
+  background: #fff;
+  color:#31bc86;
 }
 
 #dropzone {
   position: absolute;
   top: 50%;
   left:50%;
-  border: 3px solid #fee;
+  border: 3px solid #31bc86;
   border-radius: 5px;
-  color: white;
   font: bold 16px arial;
 
   height: 200px;
@@ -19,16 +19,10 @@ body {
   text-overflow: clip;
 }
 
-#dropzone.hover {
+#dropzone.hover, #dropzone.dropped {
   border: 3px solid #fee;
-  background: #fe5c68;
+  background: #31bc86;
   color: #fff;
-}
-
-#dropzone.dropped {
-  background: #fff;
-  border: 3px solid #fee;
-  color: #ee4c58;
 }
 
 #dropzone div {
