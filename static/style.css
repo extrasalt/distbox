@@ -4,7 +4,7 @@ body {
 }
 
 #dropzone {
-  border: 3px solid #31bc86;
+  border: 3px dashed #31bc86;
   border-radius: 5px;
   font: bold 16px arial;
 
