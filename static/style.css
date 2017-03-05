@@ -43,12 +43,6 @@ body {
   align-items: center;
 }
 
-#dropzone img {
-  border-radius: 10px;
-  vertical-align: middle;
-  max-width: 95%;
-  max-height: 95%;
-}
 
 #dropzone [type="file"] {
   cursor: pointer;
@@ -58,20 +52,6 @@ body {
   right: 0;
   bottom: 0;
   left: 0;
-}
-
-button#btn {
-  position: absolute;
-  bottom: 10%;
-  right: 10%;
-  font: bold 16px arial;
-  background: #fee;
-  border: 1px solid #ee4c58;
-  border-radius: 10px;
-  padding: 5px;
-  margin:auto;
-  color: #ee4c58;
-
 }
 
 #page{

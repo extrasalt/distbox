@@ -13,7 +13,6 @@ $(function() {
 
     $('#dropzone').removeClass('hover');    
     $('#dropzone').addClass('dropped');
-    $('#dropzone img').remove();
     
       var reader = new FileReader(file);
 
