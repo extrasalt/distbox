@@ -4,19 +4,15 @@ body {
 }
 
 #dropzone {
-  position: absolute;
-  top: 50%;
-  left:50%;
   border: 3px solid #31bc86;
   border-radius: 5px;
   font: bold 16px arial;
 
   height: 200px;
-  margin-left: -150px;
-  margin-top: -100px;
   text-align: center;
   width: 300px;
   text-overflow: clip;
+  position: relative;
 }
 
 #dropzone.hover, #dropzone.dropped {
@@ -25,31 +21,24 @@ body {
   color: #fff;
 }
 
-#dropzone div {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  text-overflow: clip;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 
 #dropzone [type="file"] {
   cursor: pointer;
-  position: absolute;
   opacity: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  height: 100%;
+
 }
 
 #page{
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
+}
+
+#dropzone > div {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top:40%;
+  left:0;
 }
