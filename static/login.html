@@ -11,7 +11,7 @@
 <body>
 	
     <div id="centerdiv">   
-    <form id="mainform" action="auth" method="post">
+    <form id="mainform" action="login" method="post">
         <input type="textfield" name="name" placeholder="Username" id="username">
         <input type="password" name="password" placeholder="Password" id="pw">
         <input type="password" name="confirm_password" placeholder="Confirm Password" id="cpw">
@@ -37,7 +37,7 @@
     			submitButton.style.display = "none";
     		} else {
     			toggle.innerHTML = "Sign up"
-    			form.action = "auth"
+    			form.action = "login"
     			submitButton.value = "Login"
     			cpw.style.display = "none"
     			submitButton.style.display = "inline"
