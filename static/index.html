@@ -1,30 +1,55 @@
 <html>
 <head>
-    <meta name="HandheldFriendly" content="true" />
-    <meta name="MobileOptimized" content="320" />
-    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, width=device-width, user-scalable=no" />
-    <title>RCS cloud</title>
+    <title>Login</title>
     <link rel="stylesheet" href="style.css">
-    <script type="text/javascript" src="jquery.js"></script>
-    <script type="text/javascript" src="main.js"></script>
+    <style type="text/css">
+        body {
+            background: #31bc86;
+        }
+    </style>
 </head>
-
 <body>
-    <div id="page">
-        <div id="dropzone">
-            <div><p>Drag your files here</p></div>
-            <input type="file"/>
-        </div>
-        <div id="filelist">
-            <ul>
-                <li><a href="#">Lorem.som</a></li>
-                <li><a href="#">Ipsum.jpg</a></li>
-                <li><a href="#">photo.jpg</a></li>
-                <li><a href="#">Project.doc</a></li>
-                <li><a href="#">file.txt</a></li>
-            </ul>
-        </div>
-    </div>    
+	
+    <div id="centerdiv">   
+    <form id="mainform" action="login" method="post">
+        <input type="textfield" name="name" placeholder="Username" id="username">
+        <input type="password" name="password" placeholder="Password" id="pw">
+        <input type="password" name="confirm_password" placeholder="Confirm Password" id="cpw">
+        <input id="submitButton" type="submit" value="Login">
+    </form>
+    </div> 
+
+    <button id="toggle">Sign up</button>
+
+    <script type="text/javascript">
+    	var form = document.getElementById("mainform");
+    	var submitButton = document.getElementById("submitButton");
+    	var toggle = document.getElementById("toggle")
+    	var cpw = document.getElementById("cpw")
+    	var pw = document.getElementById("pw")
+    	var username = document.getElementById("username")
+    	toggle.onclick = function(e){
+    		if (toggle.innerHTML == "Sign up"){
+    			toggle.innerHTML = "Login"
+    			form.action = "signup"
+    			submitButton.value = "Sign up"
+    			cpw.style.display = "block"
+    			submitButton.style.display = "none";
+    		} else {
+    			toggle.innerHTML = "Sign up"
+    			form.action = "login"
+    			submitButton.value = "Login"
+    			cpw.style.display = "none"
+    			submitButton.style.display = "inline"
+    		}
+    		
+    	}
+    	form.onkeyup = function(){ 
+	    	if(pw.value == cpw.value && username.value != "" && pw.value != "") {
+	    		submitButton.style.display = "inline"
+	    	}
+    	}
+		
+	</script>    
 </body>
 </html>
-
