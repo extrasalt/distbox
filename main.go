@@ -79,19 +79,27 @@ func GetFileHandler(w http.ResponseWriter, r *http.Request) {
 
 func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 
-	r.ParseForm()
-	data := r.Form["data"][0]
+	r.ParseMultipartForm(32 << 20)
+	file, header, err := r.FormFile("data")
+
+	if err != nil {
+		panic(err)
+	}
 
 	cookie, _ := r.Cookie("rcs")
 	username := cookie.Value
 
+	var b []byte
+	buf := bytes.NewBuffer(b)
+
+	fileCopy := io.TeeReader(file, buf)
+
 	//Find Key
 	sha := sha256.New()
-	sha.Write([]byte(data))
+	io.Copy(sha, file)
 	key := hex.EncodeToString(sha.Sum(nil))
 
-	plaintext := bytes.NewReader([]byte(data))
-	ciphertext := encrypt(key, plaintext)
+	ciphertext := encrypt(key, fileCopy)
 
 	shell := ipfs.NewShell("localhost:5001")
 	hash, err := shell.Add(ciphertext)
@@ -112,7 +120,7 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 	// _, err = DB.Exec("insert into files values($1, $2)", hash, key)
 
 	user.Files = append(user.Files, FileStruct{
-		Name:        "File",
+		Name:        header.Filename,
 		Key:         key,
 		ContentAddr: hash,
 	})

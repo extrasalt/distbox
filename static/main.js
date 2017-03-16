@@ -14,20 +14,9 @@ $(function() {
     $('#dropzone').removeClass('hover');    
     $('#dropzone').addClass('dropped');
     
-      var reader = new FileReader(file);
-
-      reader.readAsBinaryString(file);
-
-      reader.onload = function(e) {
-        var data = e.target.result;
-
-        $.post("/file", {data: data}, function(data){
-          document.write(data)
-        })
-      };
-
-      var ext = file.name.split('.').pop();
+    document.getElementById("fileform").submit.click();
+    var ext = file.name.split('.').pop();
       
-      $('#dropzone div').html(ext);
+    $('#dropzone div').html(ext);
   });
 });
