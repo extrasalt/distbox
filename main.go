@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"gopkg.in/mgo.v2"
+	"html/template"
 	"io"
 	"labix.org/v2/mgo/bson"
 	"net/http"
@@ -30,6 +31,7 @@ func main() {
 	r.HandleFunc("/signup", SignUpHandler).Methods("POST")
 	r.HandleFunc("/file/{id}", authenticate(GetFileHandler)).Methods("GET")
 	r.HandleFunc("/file", authenticate(FileUploadHandler)).Methods("POST")
+	r.HandleFunc("/files", authenticate(ListFilesHandler)).Methods("GET")
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 
 	http.ListenAndServe(":3000", r)
@@ -121,4 +123,28 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Write([]byte((key)))
 
+}
+
+func ListFilesHandler(w http.ResponseWriter, r *http.Request) {
+
+	//Get username
+	cookie, _ := r.Cookie("rcs")
+	username := cookie.Value
+
+	//var user User
+	var user User
+	usersCollection := session.DB("RCS").C("User")
+	err := usersCollection.Find(bson.M{"username": username}).One(&user)
+
+	if err != nil {
+		panic(err)
+	}
+
+	tmpl, err := template.ParseFiles("templates/files.html")
+
+	if err != nil {
+		panic(err)
+	}
+
+	tmpl.Execute(w, user)
 }

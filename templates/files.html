@@ -1,0 +1,28 @@
+<html>
+<head>
+    <meta name="HandheldFriendly" content="true" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, width=device-width, user-scalable=no" />
+    <title>RCS cloud</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript" src="main.js"></script>
+</head>
+
+<body>
+    <div id="page">
+        <div id="dropzone">
+            <div><p>Drag your files here</p></div>
+            <input type="file"/>
+        </div>
+        <div id="filelist">
+            <ul>
+            {{range .Files}}
+                <li><a href="/file/{{.Key}}">{{.Key}}</a></li>
+            {{end}}
+            </ul>
+        </div>
+    </div>    
+</body>
+</html>
+
