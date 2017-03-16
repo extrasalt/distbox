@@ -92,5 +92,8 @@ func SignUpHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	http.Redirect(w, r, "/", 302)
+
+	cookie := &http.Cookie{Name: "rcs", Value: username, MaxAge: 3600, Secure: false, HttpOnly: true, Raw: username}
+	http.SetCookie(w, cookie)
+	http.Redirect(w, r, "/files", 302)
 }
