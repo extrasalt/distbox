@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
+	"fmt"
 	"github.com/gorilla/mux"
 	"gopkg.in/mgo.v2"
 	"io"
@@ -54,6 +55,7 @@ func GetFileHandler(w http.ResponseWriter, r *http.Request) {
 	err := usersCollection.Find(bson.M{"username": username}).One(&user)
 
 	for _, file := range user.Files {
+		fmt.Println(file.Key)
 		if file.Key == key {
 			qhash = file.ContentAddr
 		}
@@ -111,6 +113,8 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 		Key:         key,
 		ContentAddr: hash,
 	})
+
+	usersCollection.Update(bson.M{"username": username}, user)
 
 	w.Write([]byte(hash))
 	w.Write([]byte("Uploaded"))
