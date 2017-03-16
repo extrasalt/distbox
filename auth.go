@@ -3,26 +3,28 @@ package main
 import (
 	"fmt"
 	"golang.org/x/crypto/bcrypt"
+	"labix.org/v2/mgo/bson"
 	"net/http"
 )
 
+type User struct {
+	Username string
+	Password string
+	Files    []FileStruct
+}
+
+type FileStruct struct {
+	Name        string
+	Key         string
+	ContentAddr string
+}
+
 func authorize(username string, password string) (autherr error) {
-	var dbpassword string
-	rows, err := DB.Query("Select password from login where name=$1", username)
+	var user User
+	usersCollection := session.DB("RCS").C("User")
+	usersCollection.Find(bson.M{"username": username}).One(&user)
 
-	if err != nil {
-		panic(err)
-	}
-
-	for rows.Next() {
-		err = rows.Scan(&dbpassword)
-		if err != nil {
-			panic(err)
-		}
-		break
-	}
-
-	err = bcrypt.CompareHashAndPassword([]byte(dbpassword), []byte(password))
+	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if err == nil {
 		return nil
 	} else {
@@ -80,6 +82,15 @@ func SignUpHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	_, err = DB.Exec("insert into login values($1, $2)", username, hashedPassword)
+
+	usersCollection := session.DB("RCS").C("User")
+	err = usersCollection.Insert(&User{
+		Username: username,
+		Password: string(hashedPassword),
+	})
+
+	if err != nil {
+		panic(err)
+	}
 	http.Redirect(w, r, "/", 302)
 }

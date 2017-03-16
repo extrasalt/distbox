@@ -3,34 +3,23 @@ package main
 import (
 	"bytes"
 	"crypto/sha256"
-	"database/sql"
 	"encoding/hex"
 	"github.com/gorilla/mux"
-	ipfs "github.com/ipfs/go-ipfs-api"
-	_ "github.com/lib/pq"
+	"gopkg.in/mgo.v2"
 	"io"
+	"labix.org/v2/mgo/bson"
 	"net/http"
+
+	ipfs "github.com/ipfs/go-ipfs-api"
 )
 
-var DB *sql.DB
+var session *mgo.Session
 
 func main() {
 	var err error
 
-	DB, err = sql.Open("postgres", "password=password  user=user dbname=my_db sslmode=disable")
-	if err != nil {
-		panic(err)
-	}
-
-	_, err = DB.Exec("CREATE TABLE IF NOT EXISTS login(name varchar, password varchar)")
-
-	if err != nil {
-		panic(err)
-	}
-
-	//Replace with proper relational tables.
-	_, err = DB.Exec("CREATE TABLE IF NOT EXISTS files(qhash varchar, keyhash varchar)")
-
+	url := "0.0.0.0:27017"
+	session, err = mgo.Dial(url)
 	if err != nil {
 		panic(err)
 	}
@@ -46,26 +35,28 @@ func main() {
 }
 
 func GetFileHandler(w http.ResponseWriter, r *http.Request) {
+	//For a given key, find the content-address of the file,
+	// fetch the file and decrypt it.
+
+	//Get id from the path
 	vars := mux.Vars(r)
 	key := vars["id"]
 
+	cookie, _ := r.Cookie("rcs")
+	username := cookie.Value
+
 	var qhash string
 
-	rows, err := DB.Query("Select qhash from files where keyhash=$1", key)
+	var user User
 
-	if err != nil {
-		panic(err)
-	}
+	usersCollection := session.DB("RCS").C("User")
 
-	for rows.Next() {
-		err = rows.Scan(&qhash)
+	err := usersCollection.Find(bson.M{"username": username}).One(&user)
 
-		if err != nil {
-			panic(err)
+	for _, file := range user.Files {
+		if file.Key == key {
+			qhash = file.ContentAddr
 		}
-
-		break
-
 	}
 
 	//sends a GET to Ipfs daemon
@@ -86,13 +77,15 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	data := r.Form["data"][0]
 
+	cookie, _ := r.Cookie("rcs")
+	username := cookie.Value
+
 	//Find Key
 	sha := sha256.New()
 	sha.Write([]byte(data))
 	key := hex.EncodeToString(sha.Sum(nil))
 
 	plaintext := bytes.NewReader([]byte(data))
-
 	ciphertext := encrypt(key, plaintext)
 
 	shell := ipfs.NewShell("localhost:5001")
@@ -102,11 +95,25 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
+	var user User
+	usersCollection := session.DB("RCS").C("User")
+	err = usersCollection.Find(bson.M{"username": username}).One(&user)
+
+	if err != nil {
+		panic(err)
+	}
+
 	//Add the hash received from ipfs and the key to the database
-	_, err = DB.Exec("insert into files values($1, $2)", hash, key)
+	// _, err = DB.Exec("insert into files values($1, $2)", hash, key)
+
+	user.Files = append(user.Files, FileStruct{
+		Name:        "File",
+		Key:         key,
+		ContentAddr: hash,
+	})
 
 	w.Write([]byte(hash))
-	w.Write([]byte("\n\n"))
+	w.Write([]byte("Uploaded"))
 
 	w.Write([]byte((key)))
 
