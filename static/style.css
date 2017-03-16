@@ -44,6 +44,9 @@ body {
   height: 100%;
   position: absolute;
   left:0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 #filelist {
@@ -52,6 +55,23 @@ body {
   display: block;
 }
 
+#filelist li {
+  list-style: none;
+  border-bottom: 3px solid #eee;
+}
+
+#filelist ul {
+  padding: 0;
+}
+
+#filelist a {
+  display: block;
+  font: bold 16px Arial;
+  text-decoration: none;
+  color:#31bc86;
+  padding: 10px;
+  padding-bottom: 2px;
+}
 
 #centerdiv {
     position: absolute;
@@ -110,3 +130,4 @@ body {
     font:bold 12px Arial;
 
 }
+
