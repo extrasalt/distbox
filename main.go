@@ -29,6 +29,7 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/", ShowLoginPageHandler).Methods("GET")
 	r.HandleFunc("/login", LoginHandler)
+	r.HandleFunc("/logout", LogoutHandler)
 	r.HandleFunc("/signup", SignUpHandler).Methods("POST")
 	r.HandleFunc("/file/{id}", authenticate(GetFileHandler)).Methods("GET")
 	r.HandleFunc("/file", authenticate(FileUploadHandler)).Methods("POST")
@@ -162,4 +163,11 @@ func ListFilesHandler(w http.ResponseWriter, r *http.Request) {
 func ShowLoginPageHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl, _ := template.ParseFiles("templates/login.html")
 	tmpl.Execute(w, nil)
+}
+
+func LogoutHandler(w http.ResponseWriter, r *http.Request) {
+	cookie, _ := r.Cookie("rcs")
+	cookie.MaxAge = -1
+	http.SetCookie(w, cookie)
+	http.Redirect(w, r, "/", 302)
 }
