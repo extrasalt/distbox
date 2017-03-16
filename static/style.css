@@ -1,6 +1,8 @@
 body {
   background: #fff;
   color:#31bc86;
+  padding:0;
+  margin: 0;
 }
 
 #dropzone {
@@ -47,6 +49,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+#fileform {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }
 
 #filelist {
@@ -136,5 +145,23 @@ body {
   height: 0.1px;
   overflow: hidden;
   opacity: 0;
+}
+
+#nav {
+  height: 30px;
+  background: #31bc86;
+  padding: 10px;
+  margin: 0;
+  margin-bottom:40px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+
+#nav a {
+  text-decoration: none;
+  color: white;
+  font: bold 16px sans-serif;
 }
 
