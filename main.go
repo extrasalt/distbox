@@ -96,10 +96,10 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 
 	//Find Key
 	sha := sha256.New()
-	io.Copy(sha, file)
+	io.Copy(sha, fileCopy)
 	key := hex.EncodeToString(sha.Sum(nil))
 
-	ciphertext := encrypt(key, fileCopy)
+	ciphertext := encrypt(key, buf)
 
 	shell := ipfs.NewShell("localhost:5001")
 	hash, err := shell.Add(ciphertext)
