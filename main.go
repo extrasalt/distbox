@@ -116,12 +116,13 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 		ContentAddr: hash,
 	})
 
-	usersCollection.Update(bson.M{"username": username}, user)
+	err = usersCollection.Update(bson.M{"username": username}, user)
 
-	w.Write([]byte(hash))
-	w.Write([]byte("Uploaded"))
-
-	w.Write([]byte((key)))
+	//Redirect to Files list if no errors
+	if err != nil {
+		w.Write([]byte("Unable to upload"))
+	}
+	http.Redirect(w, r, "/files", 302)
 
 }
 
