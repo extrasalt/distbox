@@ -1,22 +1,77 @@
 <html>
 <head>
     <title>Login</title>
-    <link rel="stylesheet" href="static/style.css">
+    <!-- <link rel="stylesheet" href="static/style.css"> -->
     <style type="text/css">
-        body {
+
+        #centerdiv {
+            position: absolute;
+            top:50%;
+            left:50%;
+            margin-left: -200px;
+            margin-top:-150px;
+            background: #41dca0;
+            width: 300px;
+            padding:30px;
+            text-align: center;
+
+            border-radius: 5px;
+            border-bottom:4px solid #21bc86;
+        }
+
+        #centerdiv > form > input {
+            border: 0;
+            border-bottom: 2px solid #ccc;
+            border-radius: 5px;
+            padding:20px 10px 2px 10px;
+            margin-bottom: 30px;
+            width: 100%;
+            font:bold 16px Arial;
+        }
+
+        #centerdiv > form > input:focus {
+            background:#eee;
+            outline:none;
+        }
+
+        #centerdiv > form > input[type="submit"]{
             background: #31bc86;
+            margin: 10px;
+            color: #fff;
+            border-radius:5px;
+            width: auto;
+            padding:10px 20px 10px 20px;
+            border-bottom: 3px solid #31bc86;
+
+        }
+
+        #cpw{
+            display: none;
+        }
+
+        #toggle{
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px 10px 20px;
+            border-radius: 5px;
+            border:2px solid #fff;
+            background: #31bc86;
+            color: #fff;
+            font:bold 12px Arial;
+
         }
     </style>
 </head>
 <body>
 	
     <div id="centerdiv">   
-    <form id="mainform" action="login" method="post">
-        <input type="textfield" name="name" placeholder="Username" id="username">
-        <input type="password" name="password" placeholder="Password" id="pw">
-        <input type="password" name="confirm_password" placeholder="Confirm Password" id="cpw">
-        <input id="submitButton" type="submit" value="Login">
-    </form>
+        <form id="mainform" action="login" method="post">
+            <input type="textfield" name="name" placeholder="Username" id="username">
+            <input type="password" name="password" placeholder="Password" id="pw">
+            <input type="password" name="confirm_password" placeholder="Confirm Password" id="cpw">
+            <input id="submitButton" type="submit" value="Login">
+        </form>
     </div> 
 
     <button id="toggle">Sign up</button>
@@ -45,11 +100,11 @@
     		
     	}
     	form.onkeyup = function(){ 
-	    	if(pw.value == cpw.value && username.value != "" && pw.value != "") {
-	    		submitButton.style.display = "inline"
-	    	}
-    	}
-		
-	</script>    
+          if(pw.value == cpw.value && username.value != "" && pw.value != "") {
+             submitButton.style.display = "inline"
+         }
+     }
+
+ </script>    
 </body>
 </html>

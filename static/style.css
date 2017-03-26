@@ -82,63 +82,7 @@ body {
   padding-bottom: 2px;
 }
 
-#centerdiv {
-    position: absolute;
-    top:50%;
-    left:50%;
-    margin-left: -200px;
-    margin-top:-150px;
-    background: #41dca0;
-    width: 300px;
-    padding:30px;
-    text-align: center;
 
-    border-radius: 5px;
-    border-bottom:4px solid #21bc86;
-}
-
-#centerdiv > form > input {
-    border: 0;
-    border-bottom: 2px solid #ccc;
-    border-radius: 5px;
-    padding:20px 10px 2px 10px;
-    margin-bottom: 30px;
-    width: 100%;
-    font:bold 16px Arial;
-}
-
-#centerdiv > form > input:focus {
-    background:#eee;
-    outline:none;
-}
-
-#centerdiv > form > input[type="submit"]{
-    background: #31bc86;
-    margin: 10px;
-    color: #fff;
-    border-radius:5px;
-    width: auto;
-    padding:10px 20px 10px 20px;
-    border-bottom: 3px solid #31bc86;
-
-}
-
-#cpw{
-    display: none;
-}
-
-#toggle{
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    padding: 10px 20px 10px 20px;
-    border-radius: 5px;
-    border:2px solid #fff;
-    background: #31bc86;
-    color: #fff;
-    font:bold 12px Arial;
-
-}
 
 #subbtn {
   width: 0.1px;
