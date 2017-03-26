@@ -10,15 +10,18 @@
 
     <style>
         body {
-          background: #fff;
+          background: #fafafa;
           color:#31bc86;
           padding:0;
           margin: 0;
       }
 
       #dropzone {
-          border: 3px dashed #31bc86;
-          border-radius: 5px;
+        background: #fff;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+
+          border: 2px dashed #31bc86;
+          border-radius: 2px;
           font: bold 16px arial;
 
           height: 200px;
@@ -76,8 +79,13 @@
       }
 
       #filelist li {
+        background: #fff;
+        border-radius: 2px;
           list-style: none;
-          border-bottom: 3px solid #eee;
+          padding:10px;
+          margin: 10px;
+
+          box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
       }
 
       #filelist ul {
@@ -86,14 +94,10 @@
 
       #filelist a {
           display: block;
-          font: bold 16px Arial;
+          font: 12pt Arial;
           text-decoration: none;
           color:#31bc86;
-          padding: 10px;
-          padding-bottom: 2px;
       }
-
-
 
       #subbtn {
           width: 0.1px;
@@ -103,21 +107,21 @@
       }
 
       #nav {
+          background: #fff;
           height: 30px;
-          background: #31bc86;
           padding: 10px;
           margin: 0;
           margin-bottom:40px;
           display: flex;
           align-items: center;
           justify-content: flex-end;
-          box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+          box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
       }
 
       #nav a {
           text-decoration: none;
-          color: white;
-          font: bold 16px sans-serif;
+          color: #31bc86;;
+          font: bold 12px sans-serif;
       }
 
 
@@ -139,6 +143,7 @@
         <div id="filelist">
             <ul>
                 {{range .Files}}
+                <li><a href="/file/{{.Key}}">{{.Name}}</a></li>
                 <li><a href="/file/{{.Key}}">{{.Name}}</a></li>
                 {{end}}
             </ul>
