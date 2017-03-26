@@ -21,7 +21,7 @@ type FileStruct struct {
 
 func authorize(username string, password string) (autherr error) {
 	var user User
-	usersCollection := session.DB("RCS").C("User")
+	usersCollection := session.DB("rcs").C("User")
 	usersCollection.Find(bson.M{"username": username}).One(&user)
 
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
@@ -83,7 +83,7 @@ func SignUpHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 
-	usersCollection := session.DB("RCS").C("User")
+	usersCollection := session.DB("rcs").C("User")
 	err = usersCollection.Insert(&User{
 		Username: username,
 		Password: string(hashedPassword),

@@ -11,6 +11,7 @@ import (
 	"io"
 	"labix.org/v2/mgo/bson"
 	"net/http"
+	"os"
 
 	ipfs "github.com/ipfs/go-ipfs-api"
 )
@@ -20,7 +21,11 @@ var session *mgo.Session
 func main() {
 	var err error
 
-	url := "0.0.0.0:27017"
+	username := os.Getenv("MONGO_USER")
+	password := os.Getenv("MONGO_PASSWORD")
+
+	//TODO: URL is still hardcoded
+	url := fmt.Sprintf("mongodb://%s:%s@ds143030.mlab.com:43030/rcs", username, password)
 	session, err = mgo.Dial(url)
 	if err != nil {
 		panic(err)
@@ -54,7 +59,7 @@ func GetFileHandler(w http.ResponseWriter, r *http.Request) {
 
 	var user User
 
-	usersCollection := session.DB("RCS").C("User")
+	usersCollection := session.DB("rcs").C("User")
 
 	err := usersCollection.Find(bson.M{"username": username}).One(&user)
 
@@ -110,7 +115,7 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var user User
-	usersCollection := session.DB("RCS").C("User")
+	usersCollection := session.DB("rcs").C("User")
 	err = usersCollection.Find(bson.M{"username": username}).One(&user)
 
 	if err != nil {
@@ -144,7 +149,7 @@ func ListFilesHandler(w http.ResponseWriter, r *http.Request) {
 
 	//var user User
 	var user User
-	usersCollection := session.DB("RCS").C("User")
+	usersCollection := session.DB("rcs").C("User")
 	err := usersCollection.Find(bson.M{"username": username}).One(&user)
 
 	if err != nil {
