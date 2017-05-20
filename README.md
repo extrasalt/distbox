@@ -1,2 +1,2 @@
-# rcs-gateway
-Gateway for IPFS based R-Cloud Service
+# DistBox
+A distributed, resilent personal file hosting service backed by IPFS.
